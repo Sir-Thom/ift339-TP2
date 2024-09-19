@@ -1,8 +1,10 @@
 #ifndef TP2_DEQUE_H
 #define TP2_DEQUE_H
 
+#include <algorithm>
 #include <cstddef>
 #include <iostream>
+#include <ostream>
 #include <stdexcept>
 
 /**
@@ -109,8 +111,9 @@ public:
 template <typename TYPE> deque<TYPE>::deque() {
   size_t initial_capacity = 1;
   debut_cap = new TYPE[initial_capacity]();
-  fin_cap = debut_cap + initial_capacity - 1;
+  fin_cap = debut_cap;
   debut_elem = fin_elem = debut_cap;
+  fin_elem = debut_elem - 1;
 }
 
 template <typename TYPE> deque<TYPE>::deque(size_t n) : deque() {
@@ -123,14 +126,13 @@ template <typename TYPE> deque<TYPE>::deque(size_t n) : deque() {
 template <typename TYPE> deque<TYPE>::deque(const deque &src) : deque() {
   /* Ã  implÃ©menter */
   size_t capacity = src.fin_cap - src.debut_cap + 1;
-  size_t dimension = src.size();
   debut_cap = new TYPE[capacity]();
-  fin_cap = debut_cap + capacity + 1;
+  fin_cap = debut_cap + capacity - 1;
   debut_elem = debut_cap + (src.debut_elem - src.debut_cap);
-  fin_elem = debut_elem + dimension - 1;
+  fin_elem = debut_cap + (src.fin_elem - src.debut_cap);
 
-  for (size_t i = 0; i < dimension; i++) {
-    *(this[i]) = src[i];
+  for (size_t i = 0; i < src.size(); i++) {
+    debut_cap[i] = src.debut_cap[i];
   }
 }
 
@@ -138,6 +140,20 @@ template <typename TYPE> deque<TYPE>::~deque() { delete[] debut_cap; }
 
 template <typename TYPE> deque<TYPE> &deque<TYPE>::operator=(const deque &src) {
   /* Ã  implÃ©menter */
+  if (this != &src) {
+    delete[] debut_cap;
+
+    size_t capacity = src.fin_cap - src.debut_cap + 1;
+    debut_cap = new TYPE[capacity]();
+    fin_cap = debut_cap + capacity - 1;
+    debut_elem = debut_cap + (src.debut_elem - src.debut_cap);
+    fin_elem = debut_cap + (src.fin_elem - src.debut_cap);
+
+    for (size_t i = 0; i < src.size(); i++) {
+      debut_cap[i] = (*this)[i];
+    }
+  }
+  return *this;
 }
 
 template <typename TYPE> void deque<TYPE>::resize(size_t n) {
@@ -146,6 +162,15 @@ template <typename TYPE> void deque<TYPE>::resize(size_t n) {
 
 template <typename TYPE> void deque<TYPE>::reserve(size_t n) {
   /* Ã  implÃ©menter */
+  TYPE *temp_debut_cap = new TYPE[n]();
+  size_t old_size = size();
+
+  std::copy(debut_elem, fin_elem, temp_debut_cap);
+  delete[] debut_cap;
+  debut_cap = temp_debut_cap;
+  fin_cap = debut_cap + n - 1;
+  debut_elem = fin_elem = debut_cap;
+  fin_elem = debut_elem + old_size;
 }
 
 template <typename TYPE> void deque<TYPE>::push_front(const TYPE &val) {
@@ -153,8 +178,12 @@ template <typename TYPE> void deque<TYPE>::push_front(const TYPE &val) {
 }
 
 template <typename TYPE> void deque<TYPE>::push_back(const TYPE &val) {
-
-  /* Ã  implÃ©menter */
+  if (fin_elem > fin_cap) {
+    size_t new_capacity = size() * 2;
+    reserve(new_capacity);
+  }
+  *fin_elem = val;
+  ++fin_elem;
 }
 
 template <typename TYPE> void deque<TYPE>::pop_front() { /* Ã  implÃ©menter */ }
@@ -196,10 +225,12 @@ template <typename TYPE> const TYPE &deque<TYPE>::front() const {
 
 template <typename TYPE> TYPE &deque<TYPE>::operator[](size_t i) {
   /* Ã  implÃ©menter */
+  return debut_cap[debut_elem - debut_cap + i];
 }
 
 template <typename TYPE> const TYPE &deque<TYPE>::operator[](size_t i) const {
   /* Ã  implÃ©menter */
+  return debut_cap[debut_elem - debut_cap + i];
 }
 
 template <typename TYPE> void deque<TYPE>::afficher() const {

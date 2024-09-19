@@ -5,10 +5,9 @@
 	"build": {
 		"dockerfile": "Dockerfile"
 	},
-    "workspaceFolder": "/workspace",
-  "mounts": [
-    "source=${localWorkspaceFolder},target=/workspace,type=bind"
-  ]
+  // mount nvim config
+
+	"features": {    "ghcr.io/duduribeiro/devcontainer-features/neovim:1": { "version": "stable" }},
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
