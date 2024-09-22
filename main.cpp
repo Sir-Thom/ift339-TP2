@@ -48,7 +48,28 @@ vector<int> get_histo(vector<Evenement> &events) {
   // else if (ev.type == ADD_REQUEST)
   //   ...
 
-  /* à compléter avec votre code de la Partie 2 */
+  
+     vector<int> ordre;
+     deque<int> queues[MAX_PRIOR -1];
+      for (const auto& ev : events) {
+        if (ev.type == ADD_REQUEST) {
+          //ajoute dans la deque [1,2,3,4]
+            queues[ev.priorite].push_back(ev.id);
+        } else if (ev.type == PROCESS_NEXT) {
+          //fait le tours
+            for (size_t p = MIN_PRIOR; p <= MAX_PRIOR; p++){
+               if (!queues->empty())
+               {
+                    // ajoute dans vec  prend le queue[#].front  
+                    ordre.push_back(queues[p].front());
+                    // supprimer car il est dans l'ordre 
+                    queues->pop_front();
+               }
+          }
+               
+        }
+    }
+    return ordre;
 }
 
 void test_histo() {
