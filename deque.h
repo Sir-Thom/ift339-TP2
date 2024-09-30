@@ -1,3 +1,7 @@
+/*
+Nom:Thomas Toulouse                     CIP:tout3815
+Nom:Canis Christabelle Tchonet Toukam   CIP:tchc0901
+*/
 #ifndef TP2_DEQUE_H
 #define TP2_DEQUE_H
 
